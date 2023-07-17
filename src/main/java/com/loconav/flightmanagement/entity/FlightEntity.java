@@ -51,5 +51,5 @@ public class  FlightEntity extends AbstractEntity{
 
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "flightEntity")
     @JsonManagedReference
-    private List<TicketEntity> tickets;
+    List<TicketEntity> tickets;
 }

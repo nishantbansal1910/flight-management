@@ -5,6 +5,6 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public enum FlightType {
     INTERNATIONAL,
-    DOMESTIC;
+    DOMESTIC
 
 }

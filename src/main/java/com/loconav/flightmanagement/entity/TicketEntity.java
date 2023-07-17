@@ -14,6 +14,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
 @Entity
@@ -33,4 +34,11 @@ public class TicketEntity extends AbstractEntity{
     @JoinColumn(name = "flight_id")
     @JsonManagedReference
     private FlightEntity flightEntity;
+
+    @PrePersist
+    protected void onUpdate(){
+        flightEntity.getTickets().add(this);
+        this.flightEntity.setNumberOfSeatsBooked(this.flightEntity.getNumberOfSeatsBooked()+1);
+    }
+
 }
