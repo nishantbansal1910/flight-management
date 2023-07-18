@@ -1,16 +1,13 @@
 package com.loconav.flightmanagement.service.impl;
 
-import com.loconav.flightmanagement.entity.FlightEntity;
 import com.loconav.flightmanagement.entity.TicketEntity;
-import com.loconav.flightmanagement.model.request.TicketCreateRequest;
-import com.loconav.flightmanagement.model.response.TicketCreateResponse;
+import com.loconav.flightmanagement.model.request.TicketRequest;
+import com.loconav.flightmanagement.model.response.TicketResponse;
 import com.loconav.flightmanagement.repository.FlightDetailsRepository;
 import com.loconav.flightmanagement.repository.TicketCreateRepository;
 import com.loconav.flightmanagement.repository.VacantDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class TicketService {
@@ -23,15 +20,16 @@ public class TicketService {
     @Autowired
     FlightDetailsRepository flightDetailsRepository;
 
-    public TicketCreateResponse createTicket(TicketCreateRequest ticketCreateRequest)
+    public TicketResponse addTicket(TicketRequest ticketRequest)
     {
-        if(vacantDetailsRepository.getAvailableSeats(ticketCreateRequest.getFlightId())==0)
+        if(vacantDetailsRepository.availableSeats(ticketRequest.getFlightId()) == 0)
         {
-            return TicketCreateResponse.builder().response("Sorry All Seats Are Booked").build();
+            return TicketResponse.builder().response("Sorry All Seats Are Booked").build();
         }
         TicketEntity ticketEntity=
-                com.loconav.flightmanagement.entity.TicketEntity.builder().name(ticketCreateRequest.getName()).flightEntity(flightDetailsRepository.getDetails(ticketCreateRequest.getFlightId())).build();
+                com.loconav.flightmanagement.entity.TicketEntity.builder().name(ticketRequest.getName()).flightEntity(flightDetailsRepository.find(
+                        ticketRequest.getFlightId())).build();
         ticketCreateRepository.save(ticketEntity);
-        return TicketCreateResponse.builder().response("Ticket Generated").build();
+        return TicketResponse.builder().response("Ticket Generated").build();
     }
 }

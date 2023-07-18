@@ -10,5 +10,7 @@ import java.util.Optional;
 @Repository
 public interface FlightDetailsRepository extends JpaRepository<FlightEntity, Long> {
     @Query("SELECT f from FlightEntity f WHERE f.id=:id")
-    FlightEntity getDetails(Long id);
+    Optional<FlightEntity> details(Long id);
+    @Query("SELECT f from FlightEntity f WHERE f.id=:id")
+    FlightEntity find(Long id);
 }

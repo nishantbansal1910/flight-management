@@ -1,20 +1,22 @@
 package com.loconav.flightmanagement.service.impl;
 
 import com.loconav.flightmanagement.entity.FlightEntity;
-import com.loconav.flightmanagement.model.request.FlightCreateRequest;
+import com.loconav.flightmanagement.mapper.PostFlightMapper;
+import com.loconav.flightmanagement.model.request.FlightRequest;
 import com.loconav.flightmanagement.model.request.FlightDetailsRequest;
-import com.loconav.flightmanagement.model.request.GetDetailsRequest;
+import com.loconav.flightmanagement.model.request.DetailsRequest;
 import com.loconav.flightmanagement.model.request.VacantDetailsRequest;
-import com.loconav.flightmanagement.model.response.FlightCreateResponse;
-import com.loconav.flightmanagement.model.response.GetDetailsResponse;
+import com.loconav.flightmanagement.model.response.FlightResponse;
+import com.loconav.flightmanagement.model.response.DetailsResponse;
 import com.loconav.flightmanagement.model.response.VacantDetailsResponse;
 import com.loconav.flightmanagement.repository.FlightCreateRepository;
 import com.loconav.flightmanagement.repository.FlightDetailsRepository;
-import com.loconav.flightmanagement.repository.GetDetailsRepository;
+import com.loconav.flightmanagement.repository.DetailsRepository;
 import com.loconav.flightmanagement.repository.VacantDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -29,9 +31,12 @@ public class FlightService {
     FlightDetailsRepository flightDetailsRepository;
 
     @Autowired
-    GetDetailsRepository getDetailsRepository;
+    DetailsRepository detailsRepository;
 
-    public FlightCreateResponse createNewFlight(FlightCreateRequest flightCreateRequest) {
+    @Autowired
+    PostFlightMapper postFlightMapper;
+
+    public FlightResponse NewFlight(FlightRequest flightCreateRequest) {
         FlightEntity flightEntity = FlightEntity.builder().origin(flightCreateRequest.getOrigin())
                 .flightType(flightCreateRequest.getFlightType())
                 .destination(flightCreateRequest.getDestination())
@@ -42,24 +47,27 @@ public class FlightService {
 
         flightCreateRepository.save(flightEntity);
 
-        return FlightCreateResponse.builder().response("Success").build();
+        return FlightResponse.builder().response("Success").build();
     }
 
     public VacantDetailsResponse vacantDetails(VacantDetailsRequest vacantDetailsRequest) {
         return VacantDetailsResponse.builder().response(
-                "number of available seats are " + vacantDetailsRepository.getAvailableSeats(
+                "number of available seats are " + vacantDetailsRepository.availableSeats(
                         vacantDetailsRequest.getId())).build();
     }
 
-    public FlightEntity getFlightDetails(FlightDetailsRequest flightDetailsRequest)
+    public Optional<FlightEntity> FlightDetails(FlightDetailsRequest flightDetailsRequest)
     {
-        return flightDetailsRepository.getDetails(flightDetailsRequest.getId());
+        return flightDetailsRepository.details(flightDetailsRequest.getId());
     }
 
-    public GetDetailsResponse getDetailUsingFilter(GetDetailsRequest getDetailsRequest)
+    public List<DetailsResponse> listDetails(DetailsRequest getDetailsRequest)
     {
-        return GetDetailsResponse.builder().response(GetDetailsRepository.get(getDetailsRequest.getFlightType(),
+        System.out.println(getDetailsRequest);
+
+
+        return postFlightMapper.mapFlight(detailsRepository.getFlights(getDetailsRequest.getFlightType(),
                 getDetailsRequest.getDestination(),getDetailsRequest.getOrigin(),
-                getDetailsRequest.getId())).build();
+                getDetailsRequest.getId()));
     }
 }

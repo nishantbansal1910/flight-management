@@ -1,5 +1,6 @@
 package com.loconav.flightmanagement.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.loconav.flightmanagement.enums.FlightType;
 import lombok.AllArgsConstructor;

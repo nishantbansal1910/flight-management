@@ -1,12 +1,12 @@
 package com.loconav.flightmanagement.controller;
 
 import com.loconav.flightmanagement.entity.FlightEntity;
-import com.loconav.flightmanagement.model.request.FlightCreateRequest;
+import com.loconav.flightmanagement.model.request.FlightRequest;
 import com.loconav.flightmanagement.model.request.FlightDetailsRequest;
-import com.loconav.flightmanagement.model.request.GetDetailsRequest;
+import com.loconav.flightmanagement.model.request.DetailsRequest;
 import com.loconav.flightmanagement.model.request.VacantDetailsRequest;
-import com.loconav.flightmanagement.model.response.FlightCreateResponse;
-import com.loconav.flightmanagement.model.response.GetDetailsResponse;
+import com.loconav.flightmanagement.model.response.FlightResponse;
+import com.loconav.flightmanagement.model.response.DetailsResponse;
 import com.loconav.flightmanagement.model.response.VacantDetailsResponse;
 import com.loconav.flightmanagement.service.impl.FlightService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,21 +17,26 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.sql.ClientInfoStatus;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/flights/")
-public class Flights {
+public class FlightsController {
     @Autowired
     FlightService flightService;
     @PostMapping("flight_details")
-    public FlightCreateResponse createFlight(@RequestBody FlightCreateRequest flightCreateRequest)
+    public FlightResponse addFlight(@Valid @RequestBody FlightRequest flightCreateRequest)
     {
-        return flightService.createNewFlight(flightCreateRequest);
+        return flightService.NewFlight(flightCreateRequest);
     }
 
+    /***
+     *
+     * @param id
+     * @return
+     */
     @GetMapping("vacant_seats")
     public VacantDetailsResponse vacant(@RequestParam(name="id")final Long id)
     {
@@ -40,14 +45,18 @@ public class Flights {
     }
 
     @GetMapping("get_details")
-    public FlightEntity FlightDetails(@RequestParam(name="id")final Long id)
+    public Optional<FlightEntity> Details(@RequestParam(name="id")final Long id)
     {
-        return flightService.getFlightDetails(FlightDetailsRequest.builder().id(id).build());
+        return flightService.FlightDetails(FlightDetailsRequest.builder().id(id).build());
     }
 
     @GetMapping("get_filtered_details")
-    public GetDetailsResponse getDetails(GetDetailsRequest getDetailsRequest)
+    public List<DetailsResponse> fetchDetails(@RequestParam(name="origin",required = false)final String origin,
+                                         @RequestParam(name="id",required = false)final Long id,
+                                         @RequestParam(name="destination",required = false)final String destination,
+                                         @RequestParam(name="flight_type",required = false)final String flightType)
     {
-        return
+        return flightService.listDetails(
+                DetailsRequest.builder().id(id).origin(origin).flightType(flightType).destination(destination).build());
     }
 }

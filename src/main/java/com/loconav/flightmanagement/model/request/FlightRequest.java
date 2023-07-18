@@ -1,25 +1,25 @@
 package com.loconav.flightmanagement.model.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.loconav.flightmanagement.enums.FlightType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import java.sql.Timestamp;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class FlightCreateRequest {
+public class FlightRequest {
 
     @JsonProperty("origin")
+    @NotBlank(message = "Origin Should Not Be Null")
     private String origin;
 
+    @NotBlank(message = "Destination Should Not Be Null")
     @JsonProperty("destination")
     private String destination;
 
@@ -27,15 +27,19 @@ public class FlightCreateRequest {
 //    @Enumerated(EnumType.STRING)
     private String flightType;
 
+    @NotNull(message = "Departure Time Should Not Be Null")
     @JsonProperty("departure_time")
     private Long departureTime;
 
+    @NotNull(message = "Arrival Time Should Not Be Null")
     @JsonProperty("arrival_time")
     private Long arrivalTime;
 
+    @NotNull(message = "Number Of Seats Should Not Be Null")
     @JsonProperty("number_of_seats")
     private Integer numberOfSeats;
 
+    @Builder.Default
     @JsonProperty("number_of_seats_booked")
-    private Integer numberOfSeatsBooked;
+    private Integer numberOfSeatsBooked=0;
 }
