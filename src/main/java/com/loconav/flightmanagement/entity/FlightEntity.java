@@ -37,7 +37,7 @@ public class  FlightEntity extends AbstractEntity{
     @Column(name = "flight_type")
 //    @Enumerated(EnumType.STRING)
     private String flightType;
-
+// have to use enumerated
     @Column(name = "departure_time")
     private Long departureTime;
 
